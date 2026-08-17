@@ -24,7 +24,7 @@ function sheet_(name, headers) {
 }
 
 const GIFT_HEADERS = ['Data', 'Nome', 'Método', 'Total BRL', 'Total CAD', 'Presentes', 'Recado', 'ItensJSON', 'Confirmado no extrato?'];
-const RSVP_HEADERS = ['Data', 'Nome', 'Contato', 'Acompanhante', 'Recado'];
+const RSVP_HEADERS = ['Data', 'Nome', 'Contato', 'Acompanhante'];
 
 // GET → totais de cotas por presente, em JSON: { "gelato": 3, "suite": 1, ... }
 function doGet(e) {
@@ -66,7 +66,7 @@ function doPost(e) {
     // o telefone entra depois, numa célula já formatada como texto puro —
     // sem isso, valores começando com "+" viram erro de fórmula
     sh.appendRow([
-      new Date(), p.nome || '', '', p.acompanhante || '—', p.recado || '',
+      new Date(), p.nome || '', '', p.acompanhante || '—',
     ]);
     const phoneCell = sh.getRange(sh.getLastRow(), 3);
     phoneCell.setNumberFormat('@');
@@ -77,7 +77,6 @@ function doPost(e) {
       'Nome: ' + (p.nome || '—') +
       '\nContato: ' + (p.contato || '—') +
       '\nAcompanhante: ' + (p.acompanhante || '—') +
-      '\nRecado: ' + (p.recado || '—') +
       '\n\nRegistrado na planilha.'
     );
   }

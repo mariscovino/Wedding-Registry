@@ -795,11 +795,6 @@
         </div>
       </div>
 
-      <div class="field">
-        <label for="rMsg" data-i18n="lblMsg">Recadinho para os noivos</label>
-        <textarea id="rMsg" rows="3" placeholder="Opcional — mas a gente adora"></textarea>
-      </div>
-
       <p class="form-error" id="rsvpError" role="alert"></p>
       <button class="primary-btn" id="rsvpSubmit" type="submit" data-i18n="btnSendRsvp">Enviar confirmação</button>
       <p class="privacy" data-i18n="rsvpPrivacy">
@@ -924,7 +919,6 @@
       lblName: 'Nome completo *', phName: 'Como está no convite',
       lblPhone: 'Telefone',
       lblCompanion: 'Acompanhante', phCompanion: 'Nome completo do acompanhante',
-      lblMsg: 'Recadinho para os noivos', phMsg: 'Opcional — mas a gente adora',
       btnSendRsvp: 'Enviar confirmação', sending: 'Enviando…',
       rsvpPrivacy: 'Sua resposta vai por e-mail para rsvp@mariandethan.com — sem precisar sair desta página.',
       errPrefix: 'Falta preencher: ', errName: 'seu nome completo',
@@ -989,7 +983,6 @@
       lblName: 'Full name *', phName: 'As written on your invitation',
       lblPhone: 'Phone number',
       lblCompanion: 'Plus one', phCompanion: 'Full name of your plus one',
-      lblMsg: 'A note for the couple', phMsg: 'Optional — but we love them',
       btnSendRsvp: 'Send RSVP', sending: 'Sending…',
       rsvpPrivacy: 'Your reply is emailed to rsvp@mariandethan.com — without leaving this page.',
       errPrefix: 'Please fill in: ', errName: 'your full name',
@@ -1015,7 +1008,6 @@
     document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
     rName.placeholder = t('phName');
     rCompanion.placeholder = t('phCompanion');
-    rMsg.placeholder = t('phMsg');
     langBtn.textContent = lang === 'pt' ? 'EN' : 'PT';
     renderFilters();
     renderGrid();
@@ -1516,7 +1508,6 @@
       Nome: name,
       Contato: phoneE164() || '—',
       Acompanhante: rCompanion.value.trim() || '—',
-      Recado: rMsg.value.trim() || '—',
     };
 
     rsvpSubmit.disabled = true;
@@ -1532,7 +1523,6 @@
             nome: name,
             contato: phoneE164() || '—',
             acompanhante: rCompanion.value.trim() || '—',
-            recado: rMsg.value.trim() || '—',
           }),
         });
         sent = true;
