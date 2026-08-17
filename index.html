@@ -106,7 +106,20 @@
     color: var(--olive);
   }
   .topnav a:hover { color: var(--gold); }
-  @media (max-width: 640px) { .topnav { display: none; } }
+  @media (max-width: 640px) {
+    .topbar { flex-wrap: wrap; }
+    .topnav {
+      order: 3;
+      width: 100%;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.1rem;
+      padding-top: 0.55rem;
+      margin-top: 0.2rem;
+      border-top: 1px solid var(--line);
+    }
+    .topnav a { font-size: 0.66rem; letter-spacing: 0.13em; }
+  }
 
   .topbar-right { display: flex; align-items: center; gap: 0.6rem; }
   .lang-btn {
