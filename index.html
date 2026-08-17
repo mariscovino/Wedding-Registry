@@ -718,13 +718,6 @@
         <input id="rName" type="text" autocomplete="name" placeholder="Como está no convite">
       </div>
 
-      <div id="guestFields" style="display: grid; gap: 1.1rem;">
-        <div class="field">
-          <label for="rDiet" data-i18n="lblDiet">Restrições alimentares</label>
-          <input id="rDiet" type="text" placeholder="Vegetariano, sem glúten, alergias…">
-        </div>
-      </div>
-
       <div class="field">
         <label for="rMsg" data-i18n="lblMsg">Recadinho para os noivos</label>
         <textarea id="rMsg" rows="3" placeholder="Opcional — mas a gente adora"></textarea>
@@ -848,7 +841,6 @@
       rsvpEyebrow: 'Até 28 de junho de 2027', rsvpTitle: 'Confirme sua presença',
       rsvpNote: 'Preencha os dados abaixo — sua confirmação é enviada por e-mail direto para os noivos, já organizadinha para a lista de convidados.',
       lblName: 'Nome completo *', phName: 'Como está no convite',
-      lblDiet: 'Restrições alimentares', phDiet: 'Vegetariano, sem glúten, alergias…',
       lblMsg: 'Recadinho para os noivos', phMsg: 'Opcional — mas a gente adora',
       btnSendRsvp: 'Enviar confirmação', sending: 'Enviando…',
       rsvpPrivacy: 'Sua resposta vai por e-mail para rsvp@mariandethan.com — sem precisar sair desta página.',
@@ -908,7 +900,6 @@
       rsvpEyebrow: 'By June 28th, 2027', rsvpTitle: 'Will you join us?',
       rsvpNote: 'Fill in the details below — your RSVP is emailed straight to the couple, neatly organized for the guest list.',
       lblName: 'Full name *', phName: 'As written on your invitation',
-      lblDiet: 'Dietary restrictions', phDiet: 'Vegetarian, gluten-free, allergies…',
       lblMsg: 'A note for the couple', phMsg: 'Optional — but we love them',
       btnSendRsvp: 'Send RSVP', sending: 'Sending…',
       rsvpPrivacy: 'Your reply is emailed to rsvp@mariandethan.com — without leaving this page.',
@@ -934,7 +925,6 @@
     document.title = lang === 'pt' ? 'Mari e Ethan' : 'Mari and Ethan';
     document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
     rName.placeholder = t('phName');
-    rDiet.placeholder = t('phDiet');
     rMsg.placeholder = t('phMsg');
     langBtn.textContent = lang === 'pt' ? 'EN' : 'PT';
     renderFilters();
@@ -1372,10 +1362,7 @@
     const answers = {
       _subject: 'RSVP — ' + name + ' (confirmado)',
       Nome: name,
-      'Presença': 'Sim, confirmada',
-      'Restrições alimentares': rDiet.value.trim() || 'Nenhuma',
       Recado: rMsg.value.trim() || '—',
-      Idioma: lang,
     };
 
     rsvpSubmit.disabled = true;
@@ -1389,10 +1376,7 @@
           body: new URLSearchParams({
             type: 'rsvp',
             nome: name,
-            presenca: answers['Presença'],
-            restricoes: answers['Restrições alimentares'],
             recado: rMsg.value.trim() || '—',
-            idioma: lang,
           }),
         });
         sent = true;

@@ -24,7 +24,7 @@ function sheet_(name, headers) {
 }
 
 const GIFT_HEADERS = ['Data', 'Nome', 'Método', 'Total BRL', 'Total CAD', 'Presentes', 'Recado', 'ItensJSON', 'Confirmado no extrato?'];
-const RSVP_HEADERS = ['Data', 'Nome', 'Contato', 'Presença', 'Restrições', 'Recado', 'Idioma'];
+const RSVP_HEADERS = ['Data', 'Nome', 'Recado'];
 
 // GET → totais de cotas por presente, em JSON: { "gelato": 3, "suite": 1, ... }
 function doGet(e) {
@@ -62,26 +62,14 @@ function doPost(e) {
       '\n\nRegistrado na planilha. Confira o extrato e marque a coluna "Confirmado no extrato?".'
     );
   } else if (p.type === 'rsvp') {
-    const sh = sheet_('RSVP', RSVP_HEADERS);
-    // linha entra sem o telefone; o telefone é gravado depois numa célula já formatada
-    // como texto puro — assim +1 (778) 539-1208, 17785391208, +17785391208 etc.
-    // ficam exatamente como digitados, sem erro de fórmula
-    sh.appendRow([
-      new Date(), p.nome || '', '', p.presenca || '',
-      p.restricoes || '', p.recado || '', p.idioma || '',
+    sheet_('RSVP', RSVP_HEADERS).appendRow([
+      new Date(), p.nome || '', p.recado || '',
     ]);
-    const phoneCell = sh.getRange(sh.getLastRow(), 3);
-    phoneCell.setNumberFormat('@');
-    phoneCell.setValue(p.contato || '—');
     MailApp.sendEmail(
       RSVP_EMAIL,
-      'RSVP — ' + (p.nome || '?') + ' (' + (p.presenca || '?') + ')',
+      'RSVP — ' + (p.nome || '?') + ' (confirmado)',
       'Nome: ' + (p.nome || '—') +
-      '\nContato: ' + (p.contato || '—') +
-      '\nPresença: ' + (p.presenca || '—') +
-      '\nRestrições: ' + (p.restricoes || '—') +
       '\nRecado: ' + (p.recado || '—') +
-      '\nIdioma do convidado: ' + (p.idioma || '—') +
       '\n\nRegistrado na planilha.'
     );
   }
