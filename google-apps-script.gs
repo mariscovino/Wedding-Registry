@@ -63,12 +63,16 @@ function doPost(e) {
     );
   } else if (p.type === 'rsvp') {
     const sh = sheet_('RSVP', RSVP_HEADERS);
-    // coluna Contato como texto puro — telefones com +55/+1/+353 viram erro de fórmula sem isso
-    sh.getRange(1, 3, sh.getMaxRows(), 1).setNumberFormat('@');
+    // linha entra sem o telefone; o telefone é gravado depois numa célula já formatada
+    // como texto puro — assim +1 (778) 539-1208, 17785391208, +17785391208 etc.
+    // ficam exatamente como digitados, sem erro de fórmula
     sh.appendRow([
-      new Date(), p.nome || '', p.contato || '', p.presenca || '',
+      new Date(), p.nome || '', '', p.presenca || '',
       p.restricoes || '', p.recado || '', p.idioma || '',
     ]);
+    const phoneCell = sh.getRange(sh.getLastRow(), 3);
+    phoneCell.setNumberFormat('@');
+    phoneCell.setValue(p.contato || '—');
     MailApp.sendEmail(
       RSVP_EMAIL,
       'RSVP — ' + (p.nome || '?') + ' (' + (p.presenca || '?') + ')',
