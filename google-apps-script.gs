@@ -24,7 +24,7 @@ function sheet_(name, headers) {
 }
 
 const GIFT_HEADERS = ['Data', 'Nome', 'Método', 'Total BRL', 'Total CAD', 'Presentes', 'Recado', 'ItensJSON', 'Confirmado no extrato?'];
-const RSVP_HEADERS = ['Data', 'Nome', 'Recado'];
+const RSVP_HEADERS = ['Data', 'Nome', 'Contato', 'Acompanhante', 'Recado'];
 
 // GET → totais de cotas por presente, em JSON: { "gelato": 3, "suite": 1, ... }
 function doGet(e) {
@@ -62,13 +62,21 @@ function doPost(e) {
       '\n\nRegistrado na planilha. Confira o extrato e marque a coluna "Confirmado no extrato?".'
     );
   } else if (p.type === 'rsvp') {
-    sheet_('RSVP', RSVP_HEADERS).appendRow([
-      new Date(), p.nome || '', p.recado || '',
+    const sh = sheet_('RSVP', RSVP_HEADERS);
+    // o telefone entra depois, numa célula já formatada como texto puro —
+    // sem isso, valores começando com "+" viram erro de fórmula
+    sh.appendRow([
+      new Date(), p.nome || '', '', p.acompanhante || '—', p.recado || '',
     ]);
+    const phoneCell = sh.getRange(sh.getLastRow(), 3);
+    phoneCell.setNumberFormat('@');
+    phoneCell.setValue(p.contato || '—');
     MailApp.sendEmail(
       RSVP_EMAIL,
       'RSVP — ' + (p.nome || '?') + ' (confirmado)',
       'Nome: ' + (p.nome || '—') +
+      '\nContato: ' + (p.contato || '—') +
+      '\nAcompanhante: ' + (p.acompanhante || '—') +
       '\nRecado: ' + (p.recado || '—') +
       '\n\nRegistrado na planilha.'
     );

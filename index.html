@@ -386,6 +386,17 @@
   .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem; }
   @media (max-width: 560px) { .two-col { grid-template-columns: 1fr; } }
   .att-options { display: grid; grid-template-columns: 1fr 1fr; gap: 0.7rem; }
+  .phone-row { display: flex; gap: 0.5rem; }
+  .phone-row select {
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--ink);
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    padding: 0.6rem 0.4rem;
+  }
+  .phone-row input { flex: 1; min-width: 0; }
   .form-error {
     display: none;
     background: #F6EDE4;
@@ -718,6 +729,20 @@
         <input id="rName" type="text" autocomplete="name" placeholder="Como está no convite">
       </div>
 
+      <div class="two-col">
+        <div class="field">
+          <label for="rPhoneNum" data-i18n="lblPhone">Telefone</label>
+          <div class="phone-row">
+            <select id="rCC" aria-label="Código do país / Country code"></select>
+            <input id="rPhoneNum" type="tel" inputmode="tel" autocomplete="tel-national">
+          </div>
+        </div>
+        <div class="field">
+          <label for="rCompanion" data-i18n="lblCompanion">Acompanhante</label>
+          <input id="rCompanion" type="text" placeholder="">
+        </div>
+      </div>
+
       <div class="field">
         <label for="rMsg" data-i18n="lblMsg">Recadinho para os noivos</label>
         <textarea id="rMsg" rows="3" placeholder="Opcional — mas a gente adora"></textarea>
@@ -841,6 +866,8 @@
       rsvpEyebrow: 'Até 28 de junho de 2027', rsvpTitle: 'Confirme sua presença',
       rsvpNote: 'Preencha os dados abaixo — sua confirmação é enviada por e-mail direto para os noivos, já organizadinha para a lista de convidados.',
       lblName: 'Nome completo *', phName: 'Como está no convite',
+      lblPhone: 'Telefone',
+      lblCompanion: 'Acompanhante', phCompanion: 'Nome completo do acompanhante',
       lblMsg: 'Recadinho para os noivos', phMsg: 'Opcional — mas a gente adora',
       btnSendRsvp: 'Enviar confirmação', sending: 'Enviando…',
       rsvpPrivacy: 'Sua resposta vai por e-mail para rsvp@mariandethan.com — sem precisar sair desta página.',
@@ -900,6 +927,8 @@
       rsvpEyebrow: 'By June 28th, 2027', rsvpTitle: 'Will you join us?',
       rsvpNote: 'Fill in the details below — your RSVP is emailed straight to the couple, neatly organized for the guest list.',
       lblName: 'Full name *', phName: 'As written on your invitation',
+      lblPhone: 'Phone number',
+      lblCompanion: 'Plus one', phCompanion: 'Full name of your plus one',
       lblMsg: 'A note for the couple', phMsg: 'Optional — but we love them',
       btnSendRsvp: 'Send RSVP', sending: 'Sending…',
       rsvpPrivacy: 'Your reply is emailed to rsvp@mariandethan.com — without leaving this page.',
@@ -925,6 +954,7 @@
     document.title = lang === 'pt' ? 'Mari e Ethan' : 'Mari and Ethan';
     document.querySelectorAll('[data-i18n]').forEach(el => { el.innerHTML = t(el.dataset.i18n); });
     rName.placeholder = t('phName');
+    rCompanion.placeholder = t('phCompanion');
     rMsg.placeholder = t('phMsg');
     langBtn.textContent = lang === 'pt' ? 'EN' : 'PT';
     renderFilters();
@@ -1348,6 +1378,68 @@
   // ---------- rsvp ----------
   const RSVP_EMAIL = 'rsvp@mariandethan.com';
 
+  // telefone: seletor de país + máscara automática; enviado como +<código><dígitos>
+  const COUNTRIES = [
+    { cc: '55', flag: '🇧🇷' }, { cc: '1', flag: '🇨🇦' }, { cc: '1', flag: '🇺🇸' },
+    { cc: '353', flag: '🇮🇪' }, { cc: '44', flag: '🇬🇧' }, { cc: '351', flag: '🇵🇹' },
+    { cc: '39', flag: '🇮🇹' }, { cc: '33', flag: '🇫🇷' }, { cc: '49', flag: '🇩🇪' },
+    { cc: '34', flag: '🇪🇸' }, { cc: '31', flag: '🇳🇱' }, { cc: '61', flag: '🇦🇺' },
+  ];
+  const PHONE_EX = { '55': '(21) 98888-8888', '1': '(778) 539-1208', '353': '87 123 4567' };
+  const PHONE_MAX = { '55': 11, '1': 10, '353': 9 };
+
+  COUNTRIES.forEach((c, i) => {
+    const o = document.createElement('option');
+    o.value = i;
+    o.textContent = c.flag + ' +' + c.cc;
+    rCC.appendChild(o);
+  });
+  rCC.value = lang === 'pt' ? 0 : 1;
+
+  function ccNow() { return COUNTRIES[Number(rCC.value)].cc; }
+
+  function fmtPhone(cc, d) {
+    if (cc === '55') {
+      if (d.length <= 2) return d;
+      if (d.length <= 6) return '(' + d.slice(0, 2) + ') ' + d.slice(2);
+      if (d.length <= 10) return '(' + d.slice(0, 2) + ') ' + d.slice(2, 6) + '-' + d.slice(6);
+      return '(' + d.slice(0, 2) + ') ' + d.slice(2, 7) + '-' + d.slice(7);
+    }
+    if (cc === '1') {
+      if (d.length <= 3) return d;
+      if (d.length <= 6) return '(' + d.slice(0, 3) + ') ' + d.slice(3);
+      return '(' + d.slice(0, 3) + ') ' + d.slice(3, 6) + '-' + d.slice(6);
+    }
+    if (cc === '353') {
+      if (d.length <= 2) return d;
+      if (d.length <= 5) return d.slice(0, 2) + ' ' + d.slice(2);
+      return d.slice(0, 2) + ' ' + d.slice(2, 5) + ' ' + d.slice(5);
+    }
+    return d.replace(/(\d{3})(?=\d)/g, '$1 ');
+  }
+
+  function phoneDigits() {
+    const cc = ccNow();
+    let d = rPhoneNum.value.replace(/\D/g, '');
+    // se a pessoa colou o número com o código do país, remove o código
+    if (rPhoneNum.value.trim().startsWith('+') && d.startsWith(cc)) d = d.slice(cc.length);
+    return d.slice(0, PHONE_MAX[cc] || 12);
+  }
+
+  function refreshPhone() {
+    const cc = ccNow();
+    rPhoneNum.placeholder = PHONE_EX[cc] || '123 456 789';
+    rPhoneNum.value = fmtPhone(cc, phoneDigits());
+  }
+  rPhoneNum.oninput = refreshPhone;
+  rCC.onchange = refreshPhone;
+  refreshPhone();
+
+  function phoneE164() {
+    const d = phoneDigits();
+    return d ? '+' + ccNow() + d : '';
+  }
+
   rsvpForm.onsubmit = async (e) => {
     e.preventDefault();
     const name = rName.value.trim();
@@ -1362,6 +1454,8 @@
     const answers = {
       _subject: 'RSVP — ' + name + ' (confirmado)',
       Nome: name,
+      Contato: phoneE164() || '—',
+      Acompanhante: rCompanion.value.trim() || '—',
       Recado: rMsg.value.trim() || '—',
     };
 
@@ -1376,6 +1470,8 @@
           body: new URLSearchParams({
             type: 'rsvp',
             nome: name,
+            contato: phoneE164() || '—',
+            acompanhante: rCompanion.value.trim() || '—',
             recado: rMsg.value.trim() || '—',
           }),
         });
