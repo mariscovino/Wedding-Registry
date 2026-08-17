@@ -9,8 +9,8 @@
  * Como instalar: veja SETUP.md neste repositório.
  */
 
-const GIFT_EMAIL = 'gifts@ethanandmari.com';
-const RSVP_EMAIL = 'rsvp@ethanandmari.com';
+const GIFT_EMAIL = 'gifts@mariandethan.com';
+const RSVP_EMAIL = 'rsvp@mariandethan.com';
 
 function sheet_(name, headers) {
   const ss = SpreadsheetApp.getActive();

@@ -33,7 +33,7 @@ That's it. From then on:
 - **Living spreadsheet** — a "Presentes" tab (with a "Confirmado no extrato?" column for you
   to tick once you match each payment against the bank statement) and an "RSVP" tab
   (your guest list, ready-made).
-- **Instant emails** — gifts@ and rsvp@ethanandmari.com receive every record the moment it happens.
+- **Instant emails** — gifts@ and rsvp@mariandethan.com receive every record the moment it happens.
 
 ## Notes
 
