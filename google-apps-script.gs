@@ -62,7 +62,10 @@ function doPost(e) {
       '\n\nRegistrado na planilha. Confira o extrato e marque a coluna "Confirmado no extrato?".'
     );
   } else if (p.type === 'rsvp') {
-    sheet_('RSVP', RSVP_HEADERS).appendRow([
+    const sh = sheet_('RSVP', RSVP_HEADERS);
+    // coluna Contato como texto puro — telefones com +55/+1/+353 viram erro de fórmula sem isso
+    sh.getRange(1, 3, sh.getMaxRows(), 1).setNumberFormat('@');
+    sh.appendRow([
       new Date(), p.nome || '', p.contato || '', p.presenca || '',
       p.restricoes || '', p.recado || '', p.idioma || '',
     ]);
